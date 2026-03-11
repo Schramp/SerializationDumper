@@ -1042,20 +1042,32 @@ public class SerializationDumper {
 		this.print("Array size - " + size + " - 0x" + this.byteToHex(b1) + " " + this.byteToHex(b2) + " " + this.byteToHex(b3) + " " + this.byteToHex(b4));
 		
 		//Array data
-		this.print("Values");
-		this.increaseIndent();
-		for(int i = 0; i < size; ++i) {
-			//Print element index
-			this.print("Index " + i + ":");
-			this.increaseIndent();
-			
-			//Read the field values based on the classDesc read above
-			this.readFieldValue((byte)cd.getClassName().charAt(1));
-			
-			//Revert indent
-			this.decreaseIndent();
+		if (cd.getClassName().charAt(1)=='B') {
+			StringBuilder build = new StringBuilder();
+			for(int i = 0; i < size; ++i) {
+				byte b = this._data.pop();
+				build.append(this.byteToHex(b));
+			};
+			this.print("Value " + build.toString());
+
 		}
-		this.decreaseIndent();
+		else {
+			this.print("Values");
+			this.increaseIndent();
+			for(int i = 0; i < size; ++i) {
+				//Print element index
+				this.print("Index " + i + ":");
+				this.increaseIndent();
+				
+				//Read the field values based on the classDesc read above
+				this.readFieldValue((byte)cd.getClassName().charAt(1));
+				
+				//Revert indent
+				this.decreaseIndent();
+			}
+			this.decreaseIndent();
+		};
+
 		
 		//Revert indent
 		this.decreaseIndent();
